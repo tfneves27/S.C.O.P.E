@@ -1,0 +1,11 @@
+# Ambientes virtuais
+venv/
+
+# Caches de Python e Testes
+__pycache__/
+.pytest_cache/
+*.pyc
+
+# Arquivos de sistema/cache específicos
+CACHEDIR.TAG
+.DS_Store
