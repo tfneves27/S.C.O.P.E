@@ -9,6 +9,8 @@ class Agent:
         self.y = y
         self.color = COLOR_AGENT
         self.energy = AGENT_ENERGY
+        self.vel = AGENT_SPEED
+        self.basal_loss = BASAL_LOSS
 
     ### Método Draw
     def draw(self, screen):
@@ -27,22 +29,36 @@ class Agent:
         pygame.draw.rect(screen, color_to_draw, (self.x - 15, self.y - 20, current_width, 5))
 
     ### Método Update 
-    def update(self, keys):
+    def update(self, output):
+        ### Gasto basal
+        self.energy -= self.basal_loss
+
         ### Atualiza aa posição do Agent no mapa
-        if keys[pygame.K_RIGHT] and self.x < SCREEN_WIDTH - 10:
-            self.x += AGENT_SPEED
-            self.energy -= ENERGY_LOSS
-        if keys[pygame.K_LEFT] and self.x > 10:
-            self.x -= AGENT_SPEED
-            self.energy -= ENERGY_LOSS
-        if keys[pygame.K_DOWN] and self.y < SCREEN_HEIGHT - 10:
-            self.y += AGENT_SPEED
-            self.energy -= ENERGY_LOSS
-        if keys[pygame.K_UP] and self.y > 10:
-            self.y -= AGENT_SPEED
-            self.energy -= ENERGY_LOSS
-        self.energy -= BASAL_LOSS
+        moved = False
+        if output[0] > 0.5:
+            self.y -= self.vel
+            moved = True
+        if output[1] > 0.5:
+            self.y += self.vel
+            moved = True
+        if output[2] > 0.5:
+            self.x -= self.vel
+            moved = True
+        if output[3] > 0.5:
+            self.x += self.vel
+            moved = True
+
+        if moved:
+            self.energy -= 0.1 
+        self.check_walls()
     
+    ### Método Check Wall
+    def check_walls(self):
+        if self.x < 0: self.x = 0
+        if self.x > 800: self.x = 800
+        if self.y < 0: self.y = 0
+        if self.y > 600: self.y = 600
+
     ### Método get_data
     def get_data(self):
         ### Transforma a posição do Agent em distâncias reais até as bordas da tela 
