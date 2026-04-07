@@ -91,3 +91,24 @@ class Agent:
                 return 10000, 0 
             else:
                 return closest_dist, self.angle_to_plant
+            
+    def get_input(self, plants):
+        dist_left = self.x / 800
+        dist_right = (800 - self.x) / 800
+        dist_top = self.y / 600
+        dist_base = (600 - self.y) / 600
+
+        if not plants:
+            return [dist_left, dist_right, dist_top, dist_base,  1.0, 0.0]
+        
+        nearby_plant = min(plants, key=lambda p: math.hypot(p.x - self.x, p.y - self.y))
+
+        dx = nearby_plant.x - self.x
+        dy = nearby_plant.y - self.y
+        distance = math.hypot(dx, dy)
+
+        norm_distance = distance / 1000
+
+        angle = math.atan2(dy, dx) / math.pi
+
+        return [dist_left, dist_right, dist_top, dist_base,  norm_distance, angle]
